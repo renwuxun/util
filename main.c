@@ -11,13 +11,14 @@ int onEachUnicode(int64_t out, int utf8unitlen, void* cbdata) {
     } else {
         buflen = sprintf(buf, "\\u%x", (unsigned int)out);
     }
+    printf("%s", buf);
     return 0;
 }
 
 int main() {
     char s[] = "hi你abc";
 
-    utf82unicodecb(s, (unsigned int)strlen(s), onEachUnicode, 0);
+    eachUnicode(s, (unsigned int)strlen(s), onEachUnicode, 0);
 
     return 0;
 }

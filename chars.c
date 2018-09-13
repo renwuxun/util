@@ -139,7 +139,7 @@ int unicode2utf8unit(uint64_t unicode, char* buf, unsigned int bufsize) {
  * @param onEachUnicode
  * @param cbdata
  */
-void utf82unicodecb(
+void eachUnicode(
         const char* ptr,
         unsigned int len,
         int (*onEachUnicode)(int64_t, int, void*),
