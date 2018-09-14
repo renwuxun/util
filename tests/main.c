@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <memory.h>
-#include "chars.h"
+#include "../src/chars.h"
 
 int onEachUnicode1(int64_t unicode, int utf8unitlen, void* cbdata) {
     (void)cbdata;

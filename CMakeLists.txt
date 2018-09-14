@@ -8,4 +8,4 @@ set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O2 -Wall")
 
 set(CMAKE_C_STANDARD 99)
 
-add_executable(util main.c chars.c)
+add_executable(testunicode tests/main.c src/chars.c)
