@@ -12,10 +12,10 @@
 /**
  * utf8单元转化成unicode单元
  * @param ptr
- * @param out
+ * @param unicode
  * @return int -1:error >0: utf8单元长度
  */
-int utf8unit2unicode(const char* ptr, int64_t* out);
+int utf8unit2unicode(const char* ptr, int64_t* unicode);
 
 /**
  * unicode单元转为utf8单元
@@ -24,7 +24,7 @@ int utf8unit2unicode(const char* ptr, int64_t* out);
  * @param bufsize
  * @return int uft8单元长度
  */
-int unicode2utf8unit(uint64_t unicode, char* buf, unsigned int bufsize);
+int unicode2utf8unit(int64_t unicode, char* buf, unsigned int bufsize);
 
 /**
  * 对字符串中的每个unicode单位应用用户回调函数
@@ -37,7 +37,7 @@ int unicode2utf8unit(uint64_t unicode, char* buf, unsigned int bufsize);
 void eachUnicode(
         const char* ptr,
         unsigned int len,
-        int (*onEachUnicode)(int64_t out, int utf8unitlen, void* cbdata),
+        int (*onEachUnicode)(int64_t unicode, int utf8unitlen, void* cbdata),
         void* cbdata);
 
 

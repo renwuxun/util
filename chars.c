@@ -69,7 +69,7 @@ int utf8unit2unicode(const char* ptr, int64_t* out) {
  * @param bufsize
  * @return int uft8单元长度
  */
-int unicode2utf8unit(uint64_t unicode, char* buf, unsigned int bufsize) {
+int unicode2utf8unit(int64_t unicode, char* buf, unsigned int bufsize) {
     if (unicode <= 0xffff) {
         if (unicode <= 0x7ff) {
             if (unicode <= 0x7f) { //abc
