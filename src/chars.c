@@ -2,6 +2,8 @@
 // Created by admin on 2018/9/12.
 //
 
+#include <stdio.h>
+#include <memory.h>
 #include "chars.h"
 
 
@@ -138,8 +140,9 @@ int unicode2utf8unit(int64_t unicode, char* buf, unsigned int bufsize) {
  * @param len
  * @param onEachUnicode
  * @param cbdata
+ * @return int
  */
-void eachUnicode(
+int eachUnicode(
         const char* ptr,
         unsigned int len,
         int (*onEachUnicode)(int64_t, int, void*),
@@ -152,8 +155,39 @@ void eachUnicode(
         if (utf8unitlen != -1) {
             ptr += utf8unitlen;
             if (-1 == onEachUnicode(out, utf8unitlen, cbdata)) {
-                return;
+                return -1;
             }
         }
     }
+    return 0;
+}
+
+static int toUnicodeCB(int64_t unicode, int utf8unitlen, void* cbdata) {
+    struct buf_s* b = (struct buf_s*)cbdata;
+    char buf[10] = {0};
+    int buflen;
+    if (utf8unitlen == 1) {
+        buflen = sprintf(buf, "%c", (char)unicode);
+    } else {
+        buflen = sprintf(buf, "\\u%x", (unsigned int)unicode);
+    }
+    if (buflen <= (b->size - b->len)) {
+        memcpy(b->base+b->len, buf, (size_t)buflen);
+        b->len += buflen;
+    } else {
+        return -1;
+    }
+
+    return 0;
+}
+
+int str2unicode(char* s, unsigned int slen, char* buf, unsigned int bufsize){
+    struct buf_s b;
+    b.base = buf;
+    b.len = 0;
+    b.size = bufsize;
+    if (0 == eachUnicode(s, slen, toUnicodeCB, &b)) {
+        return b.len;
+    }
+    return -1;
 }

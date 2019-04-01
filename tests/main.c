@@ -11,7 +11,7 @@ int onEachUnicode1(int64_t unicode, int utf8unitlen, void* cbdata) {
         sprintf(buf, "\\u%x", (unsigned int)unicode);
     }
     printf("%s", buf);
-    
+
     return 0;
 }
 
@@ -33,6 +33,11 @@ int main(int argc, char** argv) {
     printf("\n");
     eachUnicode(s, (unsigned int)strlen(s), onEachUnicode2, 0);
     printf("\n");
+
+    char buf[100] = {0};
+    if (0 < str2unicode(s, (unsigned int)strlen(s), buf, sizeof(buf))){
+        printf("%s\n", buf);
+    }
 
     return 0;
 }
