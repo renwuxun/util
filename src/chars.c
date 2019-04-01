@@ -13,7 +13,7 @@
  * @param out
  * @return int -1:error >0: utf8单元长度
  */
-int utf8unit2unicode(const char* ptr, int64_t* out) {
+int utf8unit2unicode(const char* ptr, unsigned int* out) {
     *out = 0;
 
     int tmp = 0x80;
@@ -71,7 +71,7 @@ int utf8unit2unicode(const char* ptr, int64_t* out) {
  * @param bufsize
  * @return int uft8单元长度
  */
-int unicode2utf8unit(int64_t unicode, char* buf, unsigned int bufsize) {
+int unicode2utf8unit(unsigned int unicode, char* buf, unsigned int bufsize) {
     if (unicode <= 0xffff) {
         if (unicode <= 0x7ff) {
             if (unicode <= 0x7f) { //abc
@@ -145,9 +145,9 @@ int unicode2utf8unit(int64_t unicode, char* buf, unsigned int bufsize) {
 int eachUnicode(
         const char* ptr,
         unsigned int len,
-        int (*onEachUnicode)(int64_t, int, void*),
+        int (*onEachUnicode)(unsigned int, int, void*),
         void* cbdata) {
-    int64_t out = 0;
+    unsigned int out = 0;
     int utf8unitlen = 0;
     const char* maxptr = ptr+len;
     for (;ptr < maxptr;) {
@@ -162,7 +162,7 @@ int eachUnicode(
     return 0;
 }
 
-static int toUnicodeCB(int64_t unicode, int utf8unitlen, void* cbdata) {
+static int toUnicodeCB(unsigned int unicode, int utf8unitlen, void* cbdata) {
     struct buf_s* b = (struct buf_s*)cbdata;
     char buf[10] = {0};
     int buflen;
@@ -181,12 +181,37 @@ static int toUnicodeCB(int64_t unicode, int utf8unitlen, void* cbdata) {
     return 0;
 }
 
+static int toAsciiCB(unsigned int unicode, int utf8unitlen, void* cbdata) {
+    struct buf_s* b = (struct buf_s*)cbdata;
+    char buf[10] = {0};
+    int buflen = sprintf(buf, "&#%d;", (int)unicode);
+    if (buflen <= (b->size - b->len)) {
+        memcpy(b->base+b->len, buf, (size_t)buflen);
+        b->len += buflen;
+    } else {
+        return -1;
+    }
+
+    return 0;
+}
+
 int str2unicode(char* s, unsigned int slen, char* buf, unsigned int bufsize){
     struct buf_s b;
     b.base = buf;
     b.len = 0;
     b.size = bufsize;
     if (0 == eachUnicode(s, slen, toUnicodeCB, &b)) {
+        return b.len;
+    }
+    return -1;
+}
+
+int str2ascii(char* s, unsigned int slen, char* buf, unsigned int bufsize){
+    struct buf_s b;
+    b.base = buf;
+    b.len = 0;
+    b.size = bufsize;
+    if (0 == eachUnicode(s, slen, toAsciiCB, &b)) {
         return b.len;
     }
     return -1;

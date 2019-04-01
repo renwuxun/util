@@ -2,7 +2,7 @@
 #include <memory.h>
 #include "../src/chars.h"
 
-int onEachUnicode1(int64_t unicode, int utf8unitlen, void* cbdata) {
+int onEachUnicode1(unsigned int unicode, int utf8unitlen, void* cbdata) {
     (void)cbdata;
     char buf[10] = {0};
     if (utf8unitlen == 1) {
@@ -15,7 +15,7 @@ int onEachUnicode1(int64_t unicode, int utf8unitlen, void* cbdata) {
     return 0;
 }
 
-int onEachUnicode2(int64_t unicode, int utf8unitlen, void* cbdata) {
+int onEachUnicode2(unsigned int unicode, int utf8unitlen, void* cbdata) {
     (void)cbdata;
     (void)utf8unitlen;
 
