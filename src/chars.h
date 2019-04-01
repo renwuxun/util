@@ -56,4 +56,14 @@ int eachUnicode(
  */
 int str2unicode(char* s, unsigned int slen, char* buf, unsigned int bufsize);
 
+/**
+ *
+ * @param s char* utf8字符串
+ * @param slen unsigned int
+ * @param buf char* 输出至buf
+ * @param bufsize buf大小
+ * @return int buf填充的长度, -1表示buf不够
+ */
+int str2ascii(char* s, unsigned int slen, char* buf, unsigned int bufsize);
+
 #endif //UTIL_CHARS_H

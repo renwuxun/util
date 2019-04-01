@@ -39,5 +39,10 @@ int main(int argc, char** argv) {
         printf("%s\n", buf);
     }
 
+    memset(buf, 0, 100);
+    if (0 < str2ascii(s, (unsigned int)strlen(s), buf, sizeof(buf))){
+        printf("%s\n", buf);
+    }
+
     return 0;
 }
