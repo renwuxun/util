@@ -24,7 +24,7 @@ int utf8unit2unicode(const char* ptr, unsigned int* out) {
     }
     switch (utf8UnitLen) {
         case 0:
-            *out = *ptr;
+            *out = (unsigned int)*ptr;
             utf8UnitLen++;
             break;
         case 2:
@@ -169,7 +169,7 @@ static int toUnicodeCB(unsigned int unicode, int utf8unitlen, void* cbdata) {
     if (utf8unitlen == 1) {
         buflen = sprintf(buf, "%c", (char)unicode);
     } else {
-        buflen = sprintf(buf, "\\u%x", (unsigned int)unicode);
+        buflen = sprintf(buf, "\\u%x", unicode);
     }
     if (buflen <= (b->size - b->len)) {
         memcpy(b->base+b->len, buf, (size_t)buflen);
@@ -182,6 +182,7 @@ static int toUnicodeCB(unsigned int unicode, int utf8unitlen, void* cbdata) {
 }
 
 static int toAsciiCB(unsigned int unicode, int utf8unitlen, void* cbdata) {
+    (void)utf8unitlen;
     struct buf_s* b = (struct buf_s*)cbdata;
     char buf[10] = {0};
     int buflen = sprintf(buf, "&#%d;", (int)unicode);
