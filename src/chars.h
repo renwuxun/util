@@ -66,4 +66,22 @@ int str2unicode(char* s, unsigned int slen, char* buf, unsigned int bufsize);
  */
 int str2ascii(char* s, unsigned int slen, char* buf, unsigned int bufsize);
 
+/**
+ *
+ * @param s
+ * @param slen
+ * @param left
+ * @param right
+ * @param onfound
+ * @param onfoundData
+ * @param onfinish
+ * @param onfinishData
+ */
+void findBetween(char* s, unsigned int slen, char left, char right,
+                void (*onfound)(char* leftPtr, char* rightPtr, void* onfoundData),
+                void* onfoundData,
+                void (*onfinish)(const char* s, unsigned int slen, const char* lastRightPtr, void* onfinishData),
+                void* onfinishData
+);
+
 #endif //UTIL_CHARS_H

@@ -217,3 +217,29 @@ int str2ascii(char* s, unsigned int slen, char* buf, unsigned int bufsize){
     }
     return -1;
 }
+
+void findBetween(char* s, unsigned int slen, char left, char right,
+                void (*onfound)(char* leftPtr, char* rightPtr, void* onfoundData),
+                void* onfoundData,
+                void (*onfinish)(const char* s, unsigned int slen, const char* lastRightPtr, void* onfinishData),
+                void* onfinishData
+){
+    char* leftPtr = NULL;
+    char* rightPtr = NULL;
+    char* lastRightPtr = NULL;
+    for (int i = 0; i < slen; ++i) {
+        if (s[i] == left) {
+            leftPtr = s+i;
+        } else if (s[i] == right && NULL != leftPtr) {
+            rightPtr = s+i;
+            lastRightPtr = rightPtr;
+            onfound(leftPtr, rightPtr, onfoundData);
+            leftPtr = NULL;
+        }
+    }
+    if (NULL != lastRightPtr) {
+        if (NULL != onfinish) {
+            onfinish(s, slen, lastRightPtr, onfinishData);
+        }
+    }
+}

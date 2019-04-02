@@ -26,8 +26,16 @@ int onEachUnicode2(unsigned int unicode, int utf8unitlen, void* cbdata) {
     return 0;
 }
 
+void onfound(char* leftptr, char* rightptr, void* data) {
+    (void)data;
+    size_t len = (size_t)(rightptr-leftptr-1);
+    char buf[100] = {0};
+    memcpy(buf, leftptr+1, len);
+    printf("%s\n", buf);
+}
+
 int main(int argc, char** argv) {
-    char s[] = "hi你abc";
+    char s[] = "hii你aiaidcabc";
 
     eachUnicode(s, (unsigned int)strlen(s), onEachUnicode1, 0);
     printf("\n");
@@ -44,5 +52,16 @@ int main(int argc, char** argv) {
         printf("%s\n", buf);
     }
 
+    findBetween(s, (unsigned int)strlen(s), 'i', 'a', onfound, NULL, NULL, NULL);
+
     return 0;
 }
+/*
+hii\u4f60aiaidcabc
+hii你aiaidcabc
+hii\u4f60aiaidcabc
+&#104;&#105;&#105;&#20320;&#97;&#105;&#97;&#105;&#100;&#99;&#97;&#98;&#99;
+你
+
+dc
+*/
