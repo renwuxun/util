@@ -7,11 +7,12 @@
 
 
 #include <stdint.h>
+#include <stddef.h>
 
 struct buf_s{
     char* base;
-    unsigned int len;
-    unsigned int size;
+    size_t len;
+    size_t size;
 };
 
 /**
@@ -20,7 +21,7 @@ struct buf_s{
  * @param unicode
  * @return int -1:error >0: utf8单元长度
  */
-int utf8unit2unicode(const char* ptr, unsigned int* unicode);
+int utf8unit2unicode(const char* ptr, uint32_t* unicode);
 
 /**
  * unicode单元转为utf8单元
@@ -29,7 +30,7 @@ int utf8unit2unicode(const char* ptr, unsigned int* unicode);
  * @param bufsize
  * @return int uft8单元长度
  */
-int unicode2utf8unit(unsigned int unicode, char* buf, unsigned int bufsize);
+int unicode2utf8unit(uint32_t unicode, char* buf, size_t bufsize);
 
 /**
  * 对字符串中的每个unicode单位应用用户回调函数
@@ -42,8 +43,8 @@ int unicode2utf8unit(unsigned int unicode, char* buf, unsigned int bufsize);
  */
 int eachUnicode(
         const char* ptr,
-        unsigned int len,
-        int (*onEachUnicode)(unsigned int unicode, int utf8unitlen, void* cbdata),
+        size_t len,
+        int (*onEachUnicode)(uint32_t unicode, int utf8unitlen, void* cbdata),
         void* cbdata);
 
 /**
@@ -54,7 +55,7 @@ int eachUnicode(
  * @param bufsize buf大小
  * @return int buf填充的长度, -1表示buf不够
  */
-int str2unicode(char* s, unsigned int slen, char* buf, unsigned int bufsize);
+int str2unicode(char* s, size_t slen, char* buf, size_t bufsize);
 
 /**
  *
@@ -64,23 +65,23 @@ int str2unicode(char* s, unsigned int slen, char* buf, unsigned int bufsize);
  * @param bufsize buf大小
  * @return int buf填充的长度, -1表示buf不够
  */
-int str2ascii(char* s, unsigned int slen, char* buf, unsigned int bufsize);
+int str2ascii(char* s, size_t slen, char* buf, size_t bufsize);
 
 /**
  *
- * @param s
- * @param slen
- * @param left
- * @param right
+ * @param s char*
+ * @param slen size_t
+ * @param left char
+ * @param right char
  * @param onfound
  * @param onfoundData
  * @param onfinish
  * @param onfinishData
  */
-void findBetween(char* s, unsigned int slen, char left, char right,
+void findBetween(char* s, size_t slen, char left, char right,
                 void (*onfound)(char* leftPtr, char* rightPtr, void* onfoundData),
                 void* onfoundData,
-                void (*onfinish)(const char* s, unsigned int slen, const char* lastRightPtr, void* onfinishData),
+                void (*onfinish)(char* s, size_t slen, char* lastRightPtr, void* onfinishData),
                 void* onfinishData
 );
 

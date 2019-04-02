@@ -2,20 +2,20 @@
 #include <memory.h>
 #include "../src/chars.h"
 
-int onEachUnicode1(unsigned int unicode, int utf8unitlen, void* cbdata) {
+int onEachUnicode1(uint32_t unicode, int utf8unitlen, void* cbdata) {
     (void)cbdata;
     char buf[10] = {0};
     if (utf8unitlen == 1) {
         sprintf(buf, "%c", (char)unicode);
     } else {
-        sprintf(buf, "\\u%x", (unsigned int)unicode);
+        sprintf(buf, "\\u%x", unicode);
     }
     printf("%s", buf);
 
     return 0;
 }
 
-int onEachUnicode2(unsigned int unicode, int utf8unitlen, void* cbdata) {
+int onEachUnicode2(uint32_t unicode, int utf8unitlen, void* cbdata) {
     (void)cbdata;
     (void)utf8unitlen;
 
@@ -37,22 +37,22 @@ void onfound(char* leftptr, char* rightptr, void* data) {
 int main(int argc, char** argv) {
     char s[] = "hii你aiaidcabc";
 
-    eachUnicode(s, (unsigned int)strlen(s), onEachUnicode1, 0);
+    eachUnicode(s, strlen(s), onEachUnicode1, 0);
     printf("\n");
-    eachUnicode(s, (unsigned int)strlen(s), onEachUnicode2, 0);
+    eachUnicode(s, strlen(s), onEachUnicode2, 0);
     printf("\n");
 
     char buf[100] = {0};
-    if (0 < str2unicode(s, (unsigned int)strlen(s), buf, sizeof(buf))){
+    if (0 < str2unicode(s, strlen(s), buf, sizeof(buf))){
         printf("%s\n", buf);
     }
 
     memset(buf, 0, 100);
-    if (0 < str2ascii(s, (unsigned int)strlen(s), buf, sizeof(buf))){
+    if (0 < str2ascii(s, strlen(s), buf, sizeof(buf))){
         printf("%s\n", buf);
     }
 
-    findBetween(s, (unsigned int)strlen(s), 'i', 'a', onfound, NULL, NULL, NULL);
+    findBetween(s, strlen(s), 'i', 'a', onfound, NULL, NULL, NULL);
 
     return 0;
 }

@@ -10,11 +10,11 @@
 /**
  * utf8单元转化成unicode单元
  * @param ptr
- * @param out
+ * @param unicode
  * @return int -1:error >0: utf8单元长度
  */
-int utf8unit2unicode(const char* ptr, unsigned int* out) {
-    *out = 0;
+int utf8unit2unicode(const char* ptr, uint32_t* unicode) {
+    *unicode = 0;
 
     int tmp = 0x80;
     int utf8UnitLen = 0;
@@ -24,38 +24,38 @@ int utf8unit2unicode(const char* ptr, unsigned int* out) {
     }
     switch (utf8UnitLen) {
         case 0:
-            *out = (unsigned int)*ptr;
+            *unicode = (unsigned int)*ptr;
             utf8UnitLen++;
             break;
         case 2:
-            *out |= (*ptr & 0x1f)<<6;
-            *out |= *(ptr+1) & 0x3f;
+            *unicode |= (*ptr & 0x1f)<<6;
+            *unicode |= *(ptr+1) & 0x3f;
             break;
         case 3:
-            *out |= (*ptr & 0xf)<<12;
-            *out |= (*(ptr+1) & 0x3f)<<6;
-            *out |= *(ptr+2) & 0x3f;
+            *unicode |= (*ptr & 0xf)<<12;
+            *unicode |= (*(ptr+1) & 0x3f)<<6;
+            *unicode |= *(ptr+2) & 0x3f;
             break;
         case 4:
-            *out |= (*ptr & 0x7)<<18;
-            *out |= (*(ptr+1) & 0x3f)<<12;
-            *out |= (*(ptr+2) & 0x3f)<<6;
-            *out |= *(ptr+3) & 0x3f;
+            *unicode |= (*ptr & 0x7)<<18;
+            *unicode |= (*(ptr+1) & 0x3f)<<12;
+            *unicode |= (*(ptr+2) & 0x3f)<<6;
+            *unicode |= *(ptr+3) & 0x3f;
             break;
         case 5:
-            *out |= (*ptr & 0x3)<<24;
-            *out |= (*(ptr+1) & 0x3f)<<18;
-            *out |= (*(ptr+2) & 0x3f)<<12;
-            *out |= (*(ptr+3) & 0x3f)<<6;
-            *out |= *(ptr+4) & 0x3f;
+            *unicode |= (*ptr & 0x3)<<24;
+            *unicode |= (*(ptr+1) & 0x3f)<<18;
+            *unicode |= (*(ptr+2) & 0x3f)<<12;
+            *unicode |= (*(ptr+3) & 0x3f)<<6;
+            *unicode |= *(ptr+4) & 0x3f;
             break;
         case 6:
-            *out |= (*ptr & 0x1)<<30;
-            *out |= (*(ptr+1) & 0x3f)<<26;
-            *out |= (*(ptr+2) & 0x3f)<<18;
-            *out |= (*(ptr+3) & 0x3f)<<12;
-            *out |= (*(ptr+4) & 0x3f)<<6;
-            *out |= *(ptr+5) & 0x3f;
+            *unicode |= (*ptr & 0x1)<<30;
+            *unicode |= (*(ptr+1) & 0x3f)<<26;
+            *unicode |= (*(ptr+2) & 0x3f)<<18;
+            *unicode |= (*(ptr+3) & 0x3f)<<12;
+            *unicode |= (*(ptr+4) & 0x3f)<<6;
+            *unicode |= *(ptr+5) & 0x3f;
             break;
         default:
             return -1;
@@ -71,7 +71,7 @@ int utf8unit2unicode(const char* ptr, unsigned int* out) {
  * @param bufsize
  * @return int uft8单元长度
  */
-int unicode2utf8unit(unsigned int unicode, char* buf, unsigned int bufsize) {
+int unicode2utf8unit(uint32_t unicode, char* buf, size_t bufsize) {
     if (unicode <= 0xffff) {
         if (unicode <= 0x7ff) {
             if (unicode <= 0x7f) { //abc
@@ -144,9 +144,10 @@ int unicode2utf8unit(unsigned int unicode, char* buf, unsigned int bufsize) {
  */
 int eachUnicode(
         const char* ptr,
-        unsigned int len,
-        int (*onEachUnicode)(unsigned int, int, void*),
-        void* cbdata) {
+        size_t len,
+        int (*onEachUnicode)(uint32_t, int, void*),
+        void* cbdata)
+{
     unsigned int out = 0;
     int utf8unitlen = 0;
     const char* maxptr = ptr+len;
@@ -196,33 +197,33 @@ static int toAsciiCB(unsigned int unicode, int utf8unitlen, void* cbdata) {
     return 0;
 }
 
-int str2unicode(char* s, unsigned int slen, char* buf, unsigned int bufsize){
+int str2unicode(char* s, size_t slen, char* buf, size_t bufsize) {
     struct buf_s b;
     b.base = buf;
     b.len = 0;
     b.size = bufsize;
     if (0 == eachUnicode(s, slen, toUnicodeCB, &b)) {
-        return b.len;
+        return (int)b.len;
     }
     return -1;
 }
 
-int str2ascii(char* s, unsigned int slen, char* buf, unsigned int bufsize){
+int str2ascii(char* s, size_t slen, char* buf, size_t bufsize) {
     struct buf_s b;
     b.base = buf;
     b.len = 0;
     b.size = bufsize;
     if (0 == eachUnicode(s, slen, toAsciiCB, &b)) {
-        return b.len;
+        return (int)b.len;
     }
     return -1;
 }
 
-void findBetween(char* s, unsigned int slen, char left, char right,
-                void (*onfound)(char* leftPtr, char* rightPtr, void* onfoundData),
-                void* onfoundData,
-                void (*onfinish)(const char* s, unsigned int slen, const char* lastRightPtr, void* onfinishData),
-                void* onfinishData
+void findBetween(char* s, size_t slen, char left, char right,
+                 void (*onfound)(char*, char*, void*),
+                 void* onfoundData,
+                 void (*onfinish)(char*, size_t, char*, void*),
+                 void* onfinishData
 ){
     char* leftPtr = NULL;
     char* rightPtr = NULL;
